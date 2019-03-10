@@ -36,7 +36,7 @@ div.f.hide * {
     display: none;
 }
 
-div.f.mark {
+div.f.highlight {
     background-color: #ffeced;
 }
 
