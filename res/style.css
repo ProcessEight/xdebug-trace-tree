@@ -88,7 +88,7 @@ span.time,
 span.memorydiff,
 span.timediff {
     overflow: hidden;
-    width: 150px;
+    /*width: 150px;*/
     text-align: right;
     white-space: nowrap;
 }
