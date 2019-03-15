@@ -1,3 +1,7 @@
+body {
+    font-family: sans-serif;
+}
+
 label {
     cursor: pointer;
 }
@@ -30,6 +34,10 @@ div.f {
     display: flex;
     flex-wrap: nowrap;
     width: 100%;
+}
+
+div.f.stripe {
+    background-color: #efefef;
 }
 
 div.f.hide * {
@@ -71,6 +79,11 @@ span.short {
 span.name {
     font-weight: bold;
     cursor: pointer;
+}
+
+span.name.internal {
+    font-style: italic;
+    font-weight: normal;
 }
 
 span.params {

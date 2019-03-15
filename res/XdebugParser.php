@@ -50,21 +50,22 @@ class XdebugParser
 
         switch (@$parts[2]) {
             case '0': // Function enter
-                $this->functions[$parts[1]]['depth']        = (int)$parts[0];
-                $this->functions[$parts[1]]['time.enter']   = $parts[3];
-                $this->functions[$parts[1]]['name']         = $parts[5];
-                $this->functions[$parts[1]]['file']         = $parts[8];
-                $this->functions[$parts[1]]['line']         = $parts[9];
+                $this->functions[$parts[1]]['depth']      = (int)$parts[0];
+                $this->functions[$parts[1]]['time.enter'] = $parts[3];
+                $this->functions[$parts[1]]['name']       = $parts[5];
+                $this->functions[$parts[1]]['internal']   = $parts[6];
+                $this->functions[$parts[1]]['file']       = $parts[8];
+                $this->functions[$parts[1]]['line']       = $parts[9];
                 if ($parts[7]) {
                     $this->functions[$parts[1]]['params'] = [$parts[7]];
                 }
 
                 // these are set later // Necessary to do this here?
-                $this->functions[$parts[1]]['return']      = '';
+                $this->functions[$parts[1]]['return'] = '';
                 break;
             case '1': // Function exit
-                $this->functions[$parts[1]]['time.exit']   = $parts[3];
-                $this->functions[$parts[1]]['time.diff']   = $this->functions[$parts[1]]['time.exit'] - $this->functions[$parts[1]]['time.enter'];
+                $this->functions[$parts[1]]['time.exit'] = $parts[3];
+                $this->functions[$parts[1]]['time.diff'] = $this->functions[$parts[1]]['time.exit'] - $this->functions[$parts[1]]['time.enter'];
                 break;
             case 'R'; // Function return
                 $this->functions[$parts[1]]['return'] = $parts[5];
@@ -90,37 +91,38 @@ class XdebugParser
         ob_start();
 
         echo '<div class="f header">';
-            echo '<div class="func">Function Call</div>';
-            echo '<div class="data">';
-                echo '<span class="file">File:Line</span>';
-            echo '</div>';
+        echo '<div class="func">Function Call</div>';
+        echo '<div class="data">';
+        echo '<span class="file">File:Line</span>';
+        echo '</div>';
         echo '</div>';
 
-        $level = 0;
-        $stripe = '';
+        $level       = 0;
+        $stripeClassName = '';
         foreach ($this->functions as $func) {
             // depth wrapper
             if ($func['depth'] > $level) {
                 for ($i = $level; $i < $func['depth']; $i++) {
                     echo '<div class="d">';
                 }
-            } else if ($func['depth'] < $level) {
+            } elseif ($func['depth'] < $level) {
                 for ($i = $func['depth']; $i < $level; $i++) {
                     echo '</div>';
                 }
             }
             $level = $func['depth'];
 
-            echo '<div class="f" style="background-color: ' . $stripe . ';">';
+            echo '<div class="f ' . $stripeClassName . '">';
             echo '<div class="func">';
-            echo '<span class="name">' . htmlspecialchars($func['name']) . '</span>';
+            $internalClassName = ($func['internal'] === "0") ? "internal" : "";
+            echo '<span class="name ' . $internalClassName . '">' . htmlspecialchars($func['name']) . '</span>';
             echo '</div>';
             echo '<div class="data">';
             echo '<span class="file" title="' . htmlspecialchars($func['file'] . ':' . $func['line']) . '">' . htmlspecialchars(basename($func['file']) . ':' . $func['line']) . '</span>';
             echo '</div>';
             echo '</div>';
 
-            $stripe = ($stripe == 'white') ? 'grey' : 'white';
+            $stripeClassName = ($stripeClassName == '') ? 'stripe' : '';
         }
 
         if ($level > 0) {
